@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #2563eb;
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+    --color-neutral: #6b7280;
+    --color-surface: #0f172a;
+    --color-bg: #f8fafc;
+    --color-bg-card: rgba(255, 255, 255, 0.85);
+    --color-border: rgba(0, 0, 0, 0.08);
+    --color-text: #1e293b;
+    --color-text-muted: #6b7280;
+  }
+
+  .dark {
+    --color-bg: #0f172a;
+    --color-bg-card: rgba(30, 41, 59, 0.7);
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-text: #f1f5f9;
+    --color-text-muted: #94a3b8;
+  }
+
+  html {
+    @apply font-sans antialiased;
+  }
+
+  body {
+    @apply bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-200;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border shadow-sm transition-shadow duration-200;
+    background: var(--color-bg-card);
+    border-color: var(--color-border);
+    @apply backdrop-blur-xl;
+  }
+
+  .card-light {
+    @apply rounded-xl border border-gray-200/80 bg-white/85 shadow-sm backdrop-blur-xl;
+  }
+
+  .dark .card {
+    @apply border-slate-700/50;
+    background: rgba(30, 41, 59, 0.7);
+  }
+
+  .btn-primary {
+    @apply rounded-lg bg-crypto-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200;
+    @apply hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-crypto-primary focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] disabled:opacity-50;
+  }
+
+  .btn-success {
+    @apply rounded-lg bg-crypto-success px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200;
+    @apply hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-crypto-success focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] disabled:opacity-50;
+  }
+
+  .btn-danger {
+    @apply rounded-lg bg-crypto-danger px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200;
+    @apply hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-crypto-danger focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply rounded-lg border border-gray-300 bg-white/80 px-4 py-2 text-sm font-medium text-gray-700 backdrop-blur-sm transition-colors duration-200;
+    @apply hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-crypto-primary focus:ring-offset-2 focus:ring-offset-[var(--color-bg)];
+  }
+
+  .dark .btn-ghost {
+    @apply border-slate-600 bg-slate-800/80 text-slate-200 hover:bg-slate-700/80;
+  }
+
+  .font-num {
+    @apply font-mono tabular-nums;
+  }
+}
+
+@layer utilities {
+  .text-gain {
+    @apply font-mono text-crypto-success;
+  }
+
+  .text-loss {
+    @apply font-mono text-crypto-danger;
+  }
+
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+}

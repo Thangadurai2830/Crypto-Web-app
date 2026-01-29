@@ -1,0 +1,37 @@
+# Filebeat — ship Docker container logs to Elasticsearch (ELK)
+# Run with docker socket: -v /var/run/docker.sock:/var/run/docker.sock
+filebeat.inputs:
+  - type: container
+    paths:
+      - /var/lib/docker/containers/*/*.log
+    stream: all
+    processors:
+      - add_docker_metadata:
+          host: "node"
+      - decode_json_fields:
+          fields: ["message"]
+          target: ""
+          overwrite_keys: true
+          when:
+            regexp: '^\s*\{.*\}'
+    # Optional: limit to backend container
+    # condition: 'contains(docker.container.name, "backend")'
+
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  index: "filebeat-docker-%{+yyyy.MM.dd}"
+
+setup.ilm.enabled: false
+setup.template.name: "filebeat-docker"
+setup.template.pattern: "filebeat-docker-*"
+setup.template.settings:
+  index.number_of_shards: 1
+
+logging.level: info
+logging.to_stderr: true

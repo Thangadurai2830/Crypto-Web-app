@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: crypto_db
+      POSTGRES_USER: crypto_user
+      POSTGRES_PASSWORD: crypto_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crypto_user -d crypto_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://crypto_user:crypto_pass@postgres:5432/crypto_db
+      DEBUG: "false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Uses image CMD: gunicorn with 4 uvicorn workers (see backend/docker/Dockerfile)
+    # For single-worker dev override: command: uvicorn src.main:app --host 0.0.0.0 --port 8000
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    # nginx serves SPA and proxies /api and /ws to backend (see frontend/nginx.conf)
+
+volumes:
+  postgres_data:
